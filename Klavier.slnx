@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/docs/">
-    <File Path="research.md" />
+    <File Path="docs/RESEARCH.md" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />

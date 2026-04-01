@@ -48,12 +48,9 @@
     * *Implementations:*
         * **UI Visualizer:** Shows the key being pressed.
         * **Audio Output:** Runs on a dedicated high-priority thread.
-            * SoundFont synthesis using the `MeltySynth` package.
-            * Pipe synth to audio output using the `NAudio` package (Windows
-              only).
-            * Explore `ManagedBass` or `MiniAudio` to replace `NAudio`
-            * Explore `FluidSynth` to replace both `MeltySynth`+`NAudio` with a
-              simpler package (but needs `.dll` distribution`)
+            * SoundFont synthesis
+            * Pipe synth to audio output
+            * Both using `FluidSynth`, simple package
                 * *Warning: FluidSynth requires native interop and OS-specific binaries, complicating deployment.*
         * **MIDI Output:**
             * Recording (using `DryWetMidi`).
