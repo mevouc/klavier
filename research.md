@@ -23,6 +23,7 @@
     * *Role:* Receive user interactions (or file I/O, etc.) and output a note/action to the Core.
     * *Implementations:*
         * Keyboard input (`AvaloniaUI` natively, or `SharpHook` for headless/background mode).
+            * *Note: Avalonia needs active focus for PhysicalKey; SharpHook handles unfocused background inputs.*
         * Mouse clicks on the UI.
         * MIDI input, similar to OpenPiano (using `DryWetMidi`).
 
@@ -30,10 +31,12 @@
     * *Role:* Receives input signals from any input adapter.
     * *Constraint:* Entirely decoupled from OS, Audio, and UI libraries.
     * *Output:* Broadcasts note events to all subscribed output adapters.
+    * *Threading: Must marshal events to the UI thread (via Dispatcher) to prevent cross-thread crashes in Avalonia.*
 
 * **UI (`AvaloniaUI`):**
     * Acts as an **Input Adapter** (mouse control, active window keyboard focus).
     * Acts as a **Visual Output Adapter**.
+    * *Architecture: View acts as the adapter (Declarative C#), ViewModel subscribes to the Core Event Bus.*
     * *Features:*
         * Keyboard with white and black keys.
         * Display active note when pressed.
@@ -48,8 +51,10 @@
             * SoundFont synthesis using the `MeltySynth` package.
             * Pipe synth to audio output using the `NAudio` package (Windows
               only).
+            * Explore `ManagedBass` or `MiniAudio` to replace `NAudio`
             * Explore `FluidSynth` to replace both `MeltySynth`+`NAudio` with a
-              simpler package (needs `.dll` distribution`
+              simpler package (but needs `.dll` distribution`)
+                * *Warning: FluidSynth requires native interop and OS-specific binaries, complicating deployment.*
         * **MIDI Output:**
             * Recording (using `DryWetMidi`).
             * Virtual instrument (via `loopMIDI` or OS native loopback).
