@@ -1,0 +1,29 @@
+This directory contains pre-built native binaries redistributed under their
+respective open-source licenses.
+
+===============================================================================
+
+FluidSynth 2.5.2 (cpp11 build)
+Source: https://github.com/FluidSynth/fluidsynth/releases/tag/v2.5.2
+License: LGPL-2.1
+https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE
+
+Files: win-x64/fluidsynth.dll (renamed from libfluidsynth-3.dll)
+
+===============================================================================
+
+SDL3 (bundled with FluidSynth 2.5.2)
+Source: https://github.com/libsdl-org/SDL
+License: zlib
+https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt
+
+Files: win-x64/SDL3.dll
+
+===============================================================================
+
+libsndfile (bundled with FluidSynth 2.5.2)
+Source: https://github.com/libsndfile/libsndfile
+License: LGPL-2.1
+https://github.com/libsndfile/libsndfile/blob/master/COPYING
+
+Files: win-x64/sndfile.dll
