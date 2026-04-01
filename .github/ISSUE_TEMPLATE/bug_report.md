@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a problem in OpenKlavier
+about: Report a problem in Klavier
 title: "[Bug]: "
 labels: bug
 ---
@@ -17,7 +17,7 @@ Describe the bug clearly.
 What should happen?
 
 ## Environment
-- OpenKlavier version:
+- Klavier version:
 - OS:
 - .NET version (if running from source):
 - MIDI device (if relevant):

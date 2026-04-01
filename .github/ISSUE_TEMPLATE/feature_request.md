@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an improvement for OpenKlavier
+about: Suggest an improvement for Klavier
 title: "[Feature]: "
 labels: enhancement
 ---

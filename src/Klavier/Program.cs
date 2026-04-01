@@ -1,7 +1,7 @@
 ﻿using MeltySynth;
 using NAudio.Wave;
 using NAudio.CoreAudioApi;
-using OpenKlavier;
+using Klavier;
 
 using FileStream sfFile = new("C:\\Users\\mevouc\\Desktop\\GRAND PIANO.sf2", FileMode.Open, FileAccess.Read, FileShare.Read);
 SoundFont soundFont = new(sfFile);
@@ -27,7 +27,7 @@ Console.WriteLine("Stop, dispose, exit. Audio device released...");
 
 Environment.Exit(0);
 
-namespace OpenKlavier
+namespace Klavier
 {
     public class MeltySynthProvider(Synthesizer synth) : ISampleProvider
     {
