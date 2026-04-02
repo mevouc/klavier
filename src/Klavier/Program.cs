@@ -1,27 +1,39 @@
-using NFluidsynth;
+using Klavier.Audio;
+using Klavier.Core.Engine;
+using Klavier.Core.Options;
+using Klavier.Core.Ports;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-Logger.SetLoggerMethod((level, message, _) =>
-{
-    if (level <= Logger.LogLevel.Error)
+FluidSynthAudioOutput.ConfigureLogging();
+
+IHost host = Host.CreateDefaultBuilder(args)
+    .UseContentRoot(AppContext.BaseDirectory)
+    .ConfigureServices((context, services) =>
     {
-        Console.Error.WriteLine($"FluidSynth ({level}): {message}");
-    }
-});
+        IConfiguration configuration = context.Configuration;
 
-using Settings settings = new();
-settings[ConfigurationKeys.AudioDriver].StringValue = "dsound";
+        services.Configure<PlaybackConfig>(configuration.GetSection("Playback"));
+        services.AddFluidSynthAudio(configuration.GetSection("Audio"));
+        services.AddSingleton<IPianoEngine, PianoEngine>();
+    })
+    .Build();
 
-using Synth synth = new(settings);
-synth.LoadSoundFont("C:\\Users\\MevenCourouble\\Desktop\\GRAND PIANO.sf2", true);
+// POC
+IPianoEngine engine = host.Services.GetRequiredService<IPianoEngine>();
+IAudioOutput audio = host.Services.GetRequiredService<IAudioOutput>();
 
-using AudioDriver driver = new(settings, synth);
+audio.Initialize();
+engine.RegisterHandler(audio);
 
 Console.WriteLine("Playing Middle C...");
-synth.NoteOn(0, 60, 100);
+engine.NoteOn(60);
 Thread.Sleep(2000);
 
 Console.WriteLine("Releasing...");
-synth.NoteOff(0, 60);
+engine.NoteOff(60);
 Thread.Sleep(1000);
 
 Console.WriteLine("Audio device released.");
+// POC ends

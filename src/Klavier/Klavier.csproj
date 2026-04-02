@@ -1,23 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SpaceWizards.NFluidsynth" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-    <Content Include="..\..\lib\native\win-x64\*.dll" Link="lib\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" TargetPath="%(Filename)%(Extension)" />
+  <ItemGroup>
+    <ProjectReference Include="..\Klavier.Core\Klavier.Core.csproj" />
+    <ProjectReference Include="..\Klavier.Audio\Klavier.Audio.csproj" />
   </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-    <Content Include="..\..\lib\native\linux-x64\*.so" Link="lib\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" TargetPath="%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-    <Content Include="..\..\lib\native\osx-arm64\*.dylib" Link="lib\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" TargetPath="%(Filename)%(Extension)" />
+  <ItemGroup>
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

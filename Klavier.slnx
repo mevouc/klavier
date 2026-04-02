@@ -18,6 +18,8 @@
     <File Path=".github/ISSUE_TEMPLATE/question.md" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Klavier.Audio/Klavier.Audio.csproj" Id="b6b51302-9068-4cac-bdd1-2d7aeb3594e9" />
+    <Project Path="src/Klavier.Core/Klavier.Core.csproj" Id="c509d48c-7a26-4c81-b268-58d549130064" />
     <Project Path="src/Klavier/Klavier.csproj" />
   </Folder>
   <Folder Name="/tests/" />
