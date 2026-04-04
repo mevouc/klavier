@@ -9,7 +9,7 @@ public class MainWindow : Window
 {
     private static readonly FrozenDictionary<PhysicalKey, ushort> _KeyToNote = new Dictionary<PhysicalKey, ushort>
     {
-        [PhysicalKey.Q] = 60,  // C4
+        [PhysicalKey.A] = 60,  // C4
         [PhysicalKey.S] = 62,  // D4
         [PhysicalKey.D] = 64,  // E4
         [PhysicalKey.F] = 65,  // F4

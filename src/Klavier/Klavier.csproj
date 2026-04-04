@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Klavier.Core\Klavier.Core.csproj" />
     <ProjectReference Include="..\Klavier.Audio\Klavier.Audio.csproj" />
+    <ProjectReference Include="..\Klavier.UI\Klavier.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />

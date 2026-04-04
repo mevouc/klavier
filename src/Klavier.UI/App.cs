@@ -2,12 +2,11 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Themes.Fluent;
 using Klavier.UI.Views;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Klavier.UI;
 
 public class App(
-    IServiceProvider serviceProvider)
+    Func<MainWindow> mainWindowFactory)
     : Application
 {
     public override void Initialize()
@@ -19,7 +18,7 @@ public class App(
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = serviceProvider.GetRequiredService<MainWindow>();
+            desktop.MainWindow = mainWindowFactory();
         }
 
         base.OnFrameworkInitializationCompleted();
