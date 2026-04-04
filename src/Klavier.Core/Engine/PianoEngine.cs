@@ -1,6 +1,7 @@
 ﻿using Klavier.Core.Events;
 using Klavier.Core.Options;
 using Klavier.Core.Ports;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Klavier.Core.Engine;
@@ -11,13 +12,17 @@ public class PianoEngine : IPianoEngine
     private const int _MidiPitchMax = 127;
 
     private readonly IOptionsMonitor<PlaybackConfig> _playbackConfig;
+    private readonly ILogger<PianoEngine> _logger;
     private PlaybackConfig _lastPlaybackConfig;
     private readonly Dictionary<ushort, int> _activeNotes = []; // value is active inputs count (note plays when there's at least one)
     private readonly HashSet<INoteEventHandler> _noteEventHandlers = [];
 
-    public PianoEngine(IOptionsMonitor<PlaybackConfig> playbackConfig)
+    public PianoEngine(
+        IOptionsMonitor<PlaybackConfig> playbackConfig,
+        ILogger<PianoEngine> logger)
     {
         _playbackConfig = playbackConfig;
+        _logger = logger;
 
         _lastPlaybackConfig = _playbackConfig.CurrentValue;
         playbackConfig.OnChange(OnPlaybackConfigChanged); // triggers AllNotesOff if transpose changes
@@ -42,6 +47,8 @@ public class PianoEngine : IPianoEngine
 
             NoteOnEvent noteOnEvent = new(transposedPitch, _playbackConfig.CurrentValue.Velocity);
 
+            _logger.LogInformation("Playing note {Pitch}", transposedPitch);
+
             foreach (INoteEventHandler noteEventHandler in _noteEventHandlers)
             {
                 noteEventHandler.OnNoteOn(noteOnEvent);
@@ -58,6 +65,8 @@ public class PianoEngine : IPianoEngine
             if (activeCount == 1)
             {
                 NoteOffEvent noteOffEvent = new(transposedPitch);
+
+                _logger.LogInformation("Releasing note {Pitch}", transposedPitch);
 
                 foreach (INoteEventHandler noteEventHandler in _noteEventHandlers)
                 {
