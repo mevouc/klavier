@@ -1,6 +1,7 @@
 ﻿using Klavier.Audio.Options;
 using Klavier.Core.Events;
 using Klavier.Core.Ports;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NFluidsynth;
 
@@ -26,13 +27,28 @@ public class FluidSynthAudioOutput : IAudioOutput
         _audioConfig.OnChange(OnAudioConfigChanged); // dynamically update volume/gain
     }
 
-    public static void ConfigureLogging()
+    public static void ConfigureThirdPartyLogging(ILogger<FluidSynthAudioOutput> logger, Logger.LogLevel minimumLogLevel)
     {
         Logger.SetLoggerMethod((level, message, _) =>
         {
-            if (level <= Logger.LogLevel.Error)
+            if (level <= minimumLogLevel)
             {
-                Console.Error.WriteLine($"FluidSynth ({level}): {message}");
+                switch (level)
+                {
+                    case Logger.LogLevel.Panic:
+                    case Logger.LogLevel.Error:
+                        logger.LogError("FluidSynth ({Level}): {Message}", level, message);
+                        break;
+                    case Logger.LogLevel.Warning:
+                        logger.LogWarning("FluidSynth ({Level}): {Message}", level, message);
+                        break;
+                    case Logger.LogLevel.Information:
+                        logger.LogInformation("FluidSynth ({Level}): {Message}", level, message);
+                        break;
+                    default:
+                        logger.LogDebug("FluidSynth ({Level}): {Message}", level, message);
+                        break;
+                }
             }
         });
     }
