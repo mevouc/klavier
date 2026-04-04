@@ -19,10 +19,6 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-FluidSynthAudioOutput.ConfigureThirdPartyLogging(
-    host.Services.GetRequiredService<ILogger<FluidSynthAudioOutput>>(),
-    NFluidsynth.Logger.LogLevel.Error);
-
 ILogger logger = host.Services.GetRequiredService<ILogger<Program>>();
 
 // POC

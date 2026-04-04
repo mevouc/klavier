@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         IConfigurationSection audioSection)
     {
         services.Configure<AudioConfig>(audioSection);
+
         services.AddSingleton<IAudioOutput, FluidSynthAudioOutput>();
 
         return services;

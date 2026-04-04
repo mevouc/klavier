@@ -10,7 +10,7 @@ namespace Klavier.Audio;
 public class FluidSynthAudioOutput : IAudioOutput
 {
     private const int _MidiChannel = 0;
-    private readonly Settings _synthSettings = new();
+    private readonly Settings _synthSettings;
     private readonly IOptionsMonitor<AudioConfig> _audioConfig;
     private AudioConfig _lastAudioConfig;
     private Synth? _synth;
@@ -19,16 +19,22 @@ public class FluidSynthAudioOutput : IAudioOutput
     private bool isDisposed;
 
     public FluidSynthAudioOutput(
-        IOptionsMonitor<AudioConfig> audioConfig)
+        IOptionsMonitor<AudioConfig> audioConfig,
+        ILogger<FluidSynthAudioOutput> logger)
     {
         _audioConfig = audioConfig;
 
         _lastAudioConfig = _audioConfig.CurrentValue;
         _audioConfig.OnChange(OnAudioConfigChanged); // dynamically update volume/gain
+
+        ConfigureThirdPartyLogging(logger);
+        _synthSettings = new Settings();
     }
 
-    public static void ConfigureThirdPartyLogging(ILogger<FluidSynthAudioOutput> logger, Logger.LogLevel minimumLogLevel)
+    private void ConfigureThirdPartyLogging(ILogger<FluidSynthAudioOutput> logger)
     {
+        Logger.LogLevel minimumLogLevel = _audioConfig.CurrentValue.FluidSynthLogLevel;
+
         Logger.SetLoggerMethod((level, message, _) =>
         {
             if (level <= minimumLogLevel)
