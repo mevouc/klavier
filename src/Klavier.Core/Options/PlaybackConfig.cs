@@ -1,7 +1,9 @@
-﻿namespace Klavier.Core.Options;
+﻿using Klavier.Core.Primitives;
+
+namespace Klavier.Core.Options;
 
 public class PlaybackConfig
 {
-    public ushort Velocity { get; init; } = 100;
+    public NoteVelocity Velocity { get; init; } = new(100);
     public short Transpose { get; init; } = 0;
 }

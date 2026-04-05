@@ -1,11 +1,12 @@
 ﻿using Klavier.Core.Ports;
+using Klavier.Core.Primitives;
 
 namespace Klavier.Core.Engine;
 
 public interface IPianoEngine
 {
     void RegisterHandler(INoteEventHandler noteEventHandler);
-    public void NoteOn(ushort pitch);
-    public void NoteOff(ushort pitch);
+    void NoteOn(NotePitch pitch);
+    void NoteOff(NotePitch pitch);
     void AllNotesOff();
 }

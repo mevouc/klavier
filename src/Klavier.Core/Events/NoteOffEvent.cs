@@ -1,4 +1,6 @@
-﻿namespace Klavier.Core.Events;
+﻿using Klavier.Core.Primitives;
+
+namespace Klavier.Core.Events;
 
 public readonly record struct NoteOffEvent(
-    ushort Pitch);
+    NotePitch Pitch);

@@ -1,6 +1,7 @@
 ﻿using Klavier.Core.Events;
 using Klavier.Core.Options;
 using Klavier.Core.Ports;
+using Klavier.Core.Primitives;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -8,13 +9,10 @@ namespace Klavier.Core.Engine;
 
 public class PianoEngine : IPianoEngine
 {
-    private const int _MidiPitchMin = 0;
-    private const int _MidiPitchMax = 127;
-
     private readonly IOptionsMonitor<PlaybackConfig> _playbackConfig;
     private readonly ILogger<PianoEngine> _logger;
     private PlaybackConfig _lastPlaybackConfig;
-    private readonly Dictionary<ushort, int> _activeNotes = []; // value is active inputs count (note plays when there's at least one)
+    private readonly Dictionary<NotePitch, int> _activeNotes = []; // value is active inputs count (note plays when there's at least one)
     private readonly HashSet<INoteEventHandler> _noteEventHandlers = [];
 
     public PianoEngine(
@@ -33,19 +31,21 @@ public class PianoEngine : IPianoEngine
         _noteEventHandlers.Add(noteEventHandler);
     }
 
-    public void NoteOn(ushort pitch)
+    public void NoteOn(NotePitch pitch)
     {
-        ushort transposedPitch = TransposePitch(pitch);
+        NoteVelocity velocity = _playbackConfig.CurrentValue.Velocity;
 
-        if (_activeNotes.TryGetValue(transposedPitch, out int activeCount) && activeCount > 0)
+        if (velocity.Value == 0) // MIDI spec: velocity 0 = note-off
         {
-            _activeNotes[transposedPitch] = activeCount + 1;
+            NoteOff(pitch);
+            return;
         }
-        else
-        {
-            _activeNotes[transposedPitch] = 1;
 
-            NoteOnEvent noteOnEvent = new(transposedPitch, _playbackConfig.CurrentValue.Velocity);
+        NotePitch transposedPitch = TransposePitch(pitch);
+
+        if (_activeNotes.TryAdd(transposedPitch, 1))
+        {
+            NoteOnEvent noteOnEvent = new(transposedPitch, velocity);
 
             _logger.LogInformation("Playing note {Pitch}", transposedPitch);
 
@@ -54,11 +54,15 @@ public class PianoEngine : IPianoEngine
                 noteEventHandler.OnNoteOn(noteOnEvent);
             }
         }
+        else // note already active
+        {
+            _activeNotes[transposedPitch]++;
+        }
     }
 
-    public void NoteOff(ushort pitch)
+    public void NoteOff(NotePitch pitch)
     {
-        ushort transposedPitch = TransposePitch(pitch);
+        NotePitch transposedPitch = TransposePitch(pitch);
 
         if (_activeNotes.TryGetValue(transposedPitch, out int activeCount))
         {
@@ -73,7 +77,7 @@ public class PianoEngine : IPianoEngine
                     noteEventHandler.OnNoteOff(noteOffEvent);
                 }
 
-                _activeNotes.Remove(transposedPitch);
+                _activeNotes.Remove(transposedPitch); // notes with 0 active play are removed from dictionary
             }
             else // activeCount > 1
             {
@@ -84,7 +88,7 @@ public class PianoEngine : IPianoEngine
 
     public void AllNotesOff()
     {
-        foreach ((ushort transposedPitch, int _) in _activeNotes)
+        foreach ((NotePitch transposedPitch, int _) in _activeNotes)
         {
             NoteOffEvent noteOffEvent = new(transposedPitch);
 
@@ -106,10 +110,10 @@ public class PianoEngine : IPianoEngine
         _lastPlaybackConfig = newConfig;
     }
 
-    private ushort TransposePitch(ushort pitch)
+    private NotePitch TransposePitch(NotePitch pitch)
     {
         short transpose = _playbackConfig.CurrentValue.Transpose;
 
-        return (ushort)Math.Clamp(pitch + transpose, _MidiPitchMin, _MidiPitchMax);
+        return new NotePitch((ushort)Math.Clamp(pitch.Value + transpose, NotePitch.MinValue, NotePitch.MaxValue));
     }
 }

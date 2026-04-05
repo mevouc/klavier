@@ -16,7 +16,7 @@ public class FluidSynthAudioOutput : IAudioOutput
     private Synth? _synth;
     private AudioDriver? _audioDriver;
 
-    private bool isDisposed;
+    private bool _isDisposed;
 
     public FluidSynthAudioOutput(
         IOptionsMonitor<AudioConfig> audioConfig,
@@ -72,12 +72,12 @@ public class FluidSynthAudioOutput : IAudioOutput
 
     public void OnNoteOn(NoteOnEvent noteOnEvent)
     {
-        _synth?.NoteOn(_MidiChannel, noteOnEvent.Pitch, noteOnEvent.Velocity);
+        _synth?.NoteOn(_MidiChannel, noteOnEvent.Pitch.Value, noteOnEvent.Velocity.Value);
     }
 
     public void OnNoteOff(NoteOffEvent noteOffEvent)
     {
-        _synth?.NoteOff(_MidiChannel, noteOffEvent.Pitch);
+        _synth?.NoteOff(_MidiChannel, noteOffEvent.Pitch.Value);
     }
 
     private void OnAudioConfigChanged(AudioConfig newConfig)
@@ -91,7 +91,7 @@ public class FluidSynthAudioOutput : IAudioOutput
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!isDisposed)
+        if (!_isDisposed)
         {
             if (disposing)
             {
@@ -102,7 +102,7 @@ public class FluidSynthAudioOutput : IAudioOutput
 
             _audioDriver = null;
             _synth = null;
-            isDisposed = true;
+            _isDisposed = true;
         }
     }
 

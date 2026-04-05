@@ -1,5 +1,7 @@
-﻿namespace Klavier.Core.Events;
+﻿using Klavier.Core.Primitives;
+
+namespace Klavier.Core.Events;
 
 public readonly record struct NoteOnEvent(
-    ushort Pitch,
-    ushort Velocity);
+    NotePitch Pitch,
+    NoteVelocity Velocity);
